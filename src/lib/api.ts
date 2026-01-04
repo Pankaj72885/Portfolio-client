@@ -99,3 +99,7 @@ export const authApi = {
   updateProfile: (data: Record<string, unknown>) =>
     api.put("/auth/profile", data),
 };
+
+export const statsApi = {
+  get: () => api.get("/stats"),
+};

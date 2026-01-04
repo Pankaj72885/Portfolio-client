@@ -2,6 +2,8 @@
 
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { statsApi } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import {
   Code,
   Eye,
@@ -12,37 +14,6 @@ import {
   MessageSquare,
   TrendingUp,
 } from "lucide-react";
-
-const stats = [
-  {
-    title: "Total Projects",
-    value: "12",
-    icon: FolderKanban,
-    change: "+2 this month",
-    color: "from-blue-500 to-cyan-500",
-  },
-  {
-    title: "Skills",
-    value: "24",
-    icon: Code,
-    change: "8 categories",
-    color: "from-purple-500 to-pink-500",
-  },
-  {
-    title: "Blog Posts",
-    value: "8",
-    icon: FileText,
-    change: "3 published",
-    color: "from-orange-500 to-red-500",
-  },
-  {
-    title: "Messages",
-    value: "5",
-    icon: Mail,
-    change: "2 unread",
-    color: "from-green-500 to-emerald-500",
-  },
-];
 
 const recentActivity = [
   { icon: Eye, text: "Portfolio viewed 156 times today", time: "2 hours ago" },
@@ -60,11 +31,54 @@ const recentActivity = [
 ];
 
 export default function AdminDashboard() {
+  const { data: statsData } = useQuery({
+    queryKey: ["stats"],
+    queryFn: async () => {
+      try {
+        const response = await statsApi.get();
+        return response.data.stats;
+      } catch {
+        return null;
+      }
+    },
+  });
+
+  const stats = [
+    {
+      title: "Total Projects",
+      value: statsData?.projects?.toString() || "0",
+      icon: FolderKanban,
+      change: "Active Projects",
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
+      title: "Skills",
+      value: statsData?.skills?.toString() || "0",
+      icon: Code,
+      change: "Technical Skills",
+      color: "from-purple-500 to-pink-500",
+    },
+    {
+      title: "Blog Posts",
+      value: statsData?.blogs?.toString() || "0",
+      icon: FileText,
+      change: "Published Posts",
+      color: "from-orange-500 to-red-500",
+    },
+    {
+      title: "Messages",
+      value: statsData?.messages?.toString() || "0",
+      icon: Mail,
+      change: `${statsData?.messages || 0} unread`,
+      color: "from-green-500 to-emerald-500",
+    },
+  ];
+
   return (
     <div className="min-h-screen">
       <AdminHeader
         title="Dashboard"
-        description="Welcome back, Pankaj! Here's what's happening."
+        description="Welcome back! Here's what's happening."
       />
 
       <div className="p-6 space-y-6">

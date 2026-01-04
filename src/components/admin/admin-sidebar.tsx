@@ -62,8 +62,8 @@ export function AdminSidebar() {
 
   const handleLogout = async () => {
     try {
-      await signOut();
       router.push("/");
+      await signOut();
     } catch (error) {
       console.error("Logout failed:", error);
     }
