@@ -55,7 +55,7 @@ export function SkillsSection({ skills = [], isLoading }: SkillsSectionProps) {
   }, {} as Record<string, Skill[]>);
 
   return (
-    <section id="skills" className="py-24 bg-slate-950">
+    <section id="skills" className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
         <motion.div
@@ -65,13 +65,13 @@ export function SkillsSection({ skills = [], isLoading }: SkillsSectionProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-indigo-400">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-primary">
             Skills & Expertise
           </h2>
-          <p className="mt-2 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
             Technologies I Work With
           </p>
-          <p className="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             A comprehensive toolkit built through years of hands-on experience
           </p>
         </motion.div>
@@ -82,14 +82,14 @@ export function SkillsSection({ skills = [], isLoading }: SkillsSectionProps) {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6"
+                className="rounded-2xl border border-border bg-card/50 p-6"
               >
-                <Skeleton className="h-6 w-32 bg-slate-800 mb-6" />
+                <Skeleton className="h-6 w-32 bg-muted mb-6" />
                 <div className="space-y-4">
                   {[1, 2, 3, 4].map((j) => (
                     <div key={j}>
-                      <Skeleton className="h-4 w-24 bg-slate-800 mb-2" />
-                      <Skeleton className="h-2 w-full bg-slate-800" />
+                      <Skeleton className="h-4 w-24 bg-muted mb-2" />
+                      <Skeleton className="h-2 w-full bg-muted" />
                     </div>
                   ))}
                 </div>
@@ -108,7 +108,7 @@ export function SkillsSection({ skills = [], isLoading }: SkillsSectionProps) {
               <motion.div
                 key={category}
                 variants={itemVariants}
-                className="group relative rounded-2xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm transition-all hover:border-slate-700 hover:bg-slate-900/80"
+                className="group relative rounded-2xl border border-border bg-card/50 p-6 backdrop-blur-sm transition-all hover:border-primary/50 hover:bg-card/80"
               >
                 {/* Category Header */}
                 <div className="flex items-center gap-3 mb-6">
@@ -121,7 +121,7 @@ export function SkillsSection({ skills = [], isLoading }: SkillsSectionProps) {
                       {category.charAt(0)}
                     </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-white">
+                  <h3 className="text-lg font-semibold text-foreground">
                     {category}
                   </h3>
                 </div>
@@ -131,14 +131,14 @@ export function SkillsSection({ skills = [], isLoading }: SkillsSectionProps) {
                   {categorySkills.map((skill) => (
                     <div key={skill.id}>
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium text-slate-300">
+                        <span className="text-sm font-medium text-foreground/90">
                           {skill.name}
                         </span>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-muted-foreground">
                           {skill.proficiency}%
                         </span>
                       </div>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                         <motion.div
                           className={`h-full rounded-full bg-gradient-to-r ${
                             categoryColors[category] ||
@@ -167,7 +167,7 @@ export function SkillsSection({ skills = [], isLoading }: SkillsSectionProps) {
 
         {!isLoading && skills.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-slate-400">No skills added yet</p>
+            <p className="text-muted-foreground">No skills added yet</p>
           </div>
         )}
       </div>

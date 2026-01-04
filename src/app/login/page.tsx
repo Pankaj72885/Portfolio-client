@@ -76,19 +76,19 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-950">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Header />
       <div className="flex flex-1 items-center justify-center px-4 py-20">
-        <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/50 p-8 shadow-xl backdrop-blur-xl">
+        <div className="w-full max-w-md rounded-2xl border border-border bg-card/50 p-8 shadow-xl backdrop-blur-xl">
           <div className="text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-purple-600">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-primary to-purple-600">
               <span className="text-2xl font-bold text-white">PB</span>
             </div>
 
-            <h1 className="mt-6 text-2xl font-bold text-white">
+            <h1 className="mt-6 text-2xl font-bold text-foreground">
               {mode === "login" ? "Welcome Back" : "Create Account"}
             </h1>
-            <p className="mt-2 text-slate-400">
+            <p className="mt-2 text-muted-foreground">
               {mode === "login"
                 ? "Sign in to access your account"
                 : "Sign up to start your journey"}
@@ -96,7 +96,7 @@ function LoginForm() {
           </div>
 
           {error && (
-            <div className="mt-6 rounded-lg bg-red-500/10 p-3 text-sm text-red-400">
+            <div className="mt-6 rounded-lg bg-red-500/10 p-3 text-sm text-red-500">
               {error}
             </div>
           )}
@@ -106,7 +106,7 @@ function LoginForm() {
               onClick={handleGoogleSignIn}
               disabled={isLoading}
               variant="outline"
-              className="w-full border-slate-700 bg-transparent text-white hover:bg-slate-800"
+              className="w-full border-input bg-transparent text-foreground hover:bg-muted"
               size="lg"
             >
               {isLoading && !email ? (
@@ -136,10 +136,10 @@ function LoginForm() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-700" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-slate-950 px-2 text-slate-500">
+                <span className="bg-background px-2 text-muted-foreground">
                   Or continue with email
                 </span>
               </div>
@@ -153,7 +153,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-slate-700 bg-slate-900/50 text-white placeholder:text-slate-500"
+                  className="border-input bg-muted/50 text-foreground placeholder:text-muted-foreground"
                 />
                 <Input
                   type="password"
@@ -162,14 +162,14 @@ function LoginForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="border-slate-700 bg-slate-900/50 text-white placeholder:text-slate-500"
+                  className="border-input bg-muted/50 text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                 size="lg"
               >
                 {isLoading && email ? (
@@ -179,13 +179,13 @@ function LoginForm() {
               </Button>
             </form>
 
-            <div className="text-center text-sm text-slate-400">
+            <div className="text-center text-sm text-muted-foreground">
               {mode === "login" ? (
                 <>
                   Don&apos;t have an account?{" "}
                   <button
                     onClick={() => setMode("signup")}
-                    className="font-medium text-indigo-400 hover:text-indigo-300"
+                    className="font-medium text-primary hover:text-primary/80"
                   >
                     Sign up
                   </button>
@@ -195,7 +195,7 @@ function LoginForm() {
                   Already have an account?{" "}
                   <button
                     onClick={() => setMode("login")}
-                    className="font-medium text-indigo-400 hover:text-indigo-300"
+                    className="font-medium text-primary hover:text-primary/80"
                   >
                     Sign in
                   </button>

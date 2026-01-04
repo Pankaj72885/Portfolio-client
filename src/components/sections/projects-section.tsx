@@ -57,7 +57,7 @@ export function ProjectsSection({
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
-    <section id="projects" className="py-24 bg-slate-950">
+    <section id="projects" className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
         <motion.div
@@ -67,13 +67,13 @@ export function ProjectsSection({
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-indigo-400">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-primary">
             Portfolio
           </h2>
-          <p className="mt-2 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
             Featured Projects
           </p>
-          <p className="mt-4 text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             A selection of my best work showcasing skills and problem-solving
             abilities
           </p>
@@ -85,13 +85,13 @@ export function ProjectsSection({
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-slate-800 bg-slate-900/50 overflow-hidden"
+                className="rounded-2xl border border-border bg-card/50 overflow-hidden"
               >
-                <Skeleton className="h-48 w-full bg-slate-800" />
+                <Skeleton className="h-48 w-full bg-muted" />
                 <div className="p-6 space-y-3">
-                  <Skeleton className="h-6 w-3/4 bg-slate-800" />
-                  <Skeleton className="h-4 w-full bg-slate-800" />
-                  <Skeleton className="h-4 w-2/3 bg-slate-800" />
+                  <Skeleton className="h-6 w-3/4 bg-muted" />
+                  <Skeleton className="h-4 w-full bg-muted" />
+                  <Skeleton className="h-4 w-2/3 bg-muted" />
                 </div>
               </div>
             ))}
@@ -108,11 +108,11 @@ export function ProjectsSection({
               <motion.div
                 key={project.id}
                 variants={itemVariants}
-                className="group relative rounded-2xl border border-slate-800 bg-slate-900/50 overflow-hidden cursor-pointer transition-all hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/10"
+                className="group relative rounded-2xl border border-border bg-card/50 overflow-hidden cursor-pointer transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10"
                 onClick={() => setSelectedProject(project)}
               >
                 {/* Image */}
-                <div className="relative h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 overflow-hidden">
+                <div className="relative h-48 bg-gradient-to-br from-primary/20 to-purple-500/20 overflow-hidden">
                   {project.image ? (
                     <img
                       src={project.image}
@@ -121,14 +121,14 @@ export function ProjectsSection({
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <div className="text-6xl font-bold text-indigo-500/30">
+                      <div className="text-6xl font-bold text-primary/30">
                         {project.title.charAt(0)}
                       </div>
                     </div>
                   )}
 
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-60" />
 
                   {/* Featured Badge */}
                   {project.featured && (
@@ -167,10 +167,10 @@ export function ProjectsSection({
 
                 {/* Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                  <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
-                  <p className="mt-2 text-sm text-slate-400 line-clamp-2">
+                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
                     {project.description}
                   </p>
 
@@ -179,20 +179,20 @@ export function ProjectsSection({
                     {project.technologies.slice(0, 4).map((tech) => (
                       <span
                         key={tech}
-                        className="rounded-full bg-slate-800 px-2.5 py-0.5 text-xs text-slate-300"
+                        className="rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground"
                       >
                         {tech}
                       </span>
                     ))}
                     {project.technologies.length > 4 && (
-                      <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-xs text-slate-500">
+                      <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
                         +{project.technologies.length - 4}
                       </span>
                     )}
                   </div>
 
                   {/* View More */}
-                  <div className="mt-4 flex items-center gap-1 text-sm text-indigo-400 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="mt-4 flex items-center gap-1 text-sm text-primary opacity-0 transition-opacity group-hover:opacity-100">
                     View Details
                     <ChevronRight className="h-4 w-4" />
                   </div>
@@ -204,7 +204,7 @@ export function ProjectsSection({
 
         {!isLoading && projects.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-slate-400">No projects added yet</p>
+            <p className="text-muted-foreground">No projects added yet</p>
           </div>
         )}
 
@@ -213,9 +213,9 @@ export function ProjectsSection({
           open={!!selectedProject}
           onOpenChange={() => setSelectedProject(null)}
         >
-          <DialogContent className="max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700 max-w-3xl">
+          <DialogContent className="max-h-[90vh] overflow-y-auto bg-card border-border max-w-3xl">
             <DialogHeader>
-              <DialogTitle className="text-2xl text-white">
+              <DialogTitle className="text-2xl text-foreground">
                 {selectedProject?.title}
               </DialogTitle>
             </DialogHeader>
@@ -235,24 +235,24 @@ export function ProjectsSection({
 
                 {/* Description */}
                 <div>
-                  <h4 className="text-sm font-medium text-indigo-400 mb-2">
+                  <h4 className="text-sm font-medium text-primary mb-2">
                     Description
                   </h4>
-                  <p className="text-slate-300">
+                  <p className="text-foreground/90">
                     {selectedProject.description}
                   </p>
                 </div>
 
                 {/* Technologies */}
                 <div>
-                  <h4 className="text-sm font-medium text-indigo-400 mb-2">
+                  <h4 className="text-sm font-medium text-primary mb-2">
                     Technologies
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedProject.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-300"
+                        className="rounded-full bg-muted px-3 py-1 text-sm text-foreground/80"
                       >
                         {tech}
                       </span>
@@ -266,7 +266,7 @@ export function ProjectsSection({
                     <h4 className="text-sm font-medium text-orange-400 mb-2">
                       Challenges Faced
                     </h4>
-                    <p className="text-slate-300 whitespace-pre-line">
+                    <p className="text-foreground/90 whitespace-pre-line">
                       {selectedProject.challenges}
                     </p>
                   </div>
@@ -278,7 +278,7 @@ export function ProjectsSection({
                     <h4 className="text-sm font-medium text-green-400 mb-2">
                       Future Improvements
                     </h4>
-                    <p className="text-slate-300 whitespace-pre-line">
+                    <p className="text-foreground/90 whitespace-pre-line">
                       {selectedProject.improvements}
                     </p>
                   </div>
@@ -289,7 +289,7 @@ export function ProjectsSection({
                   {selectedProject.liveLink && (
                     <Button
                       asChild
-                      className="bg-indigo-600 hover:bg-indigo-700"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
                       <a
                         href={selectedProject.liveLink}
@@ -304,7 +304,7 @@ export function ProjectsSection({
                   {selectedProject.repoLink && (
                     <Button
                       variant="outline"
-                      className="border-slate-700 text-white hover:bg-slate-800"
+                      className="border-input text-foreground hover:bg-muted"
                       asChild
                     >
                       <a
