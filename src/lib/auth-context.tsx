@@ -3,10 +3,12 @@
 import { authApi } from "@/lib/api";
 import { getApps, initializeApp } from "firebase/app";
 import {
+  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
   User,
 } from "firebase/auth";
@@ -33,10 +35,21 @@ const app =
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+export interface DbUser {
+  id: string;
+  email: string;
+  name: string | null;
+  photoUrl: string | null;
+  role: "ADMIN" | "USER";
+}
+
 interface AuthContextType {
   user: User | null;
+  dbUser: DbUser | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signOut: () => Promise<void>;
   getToken: () => Promise<string | null>;
 }
@@ -45,25 +58,38 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [dbUser, setDbUser] = useState<DbUser | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const syncUser = async (firebaseUser: User) => {
+    try {
+      const token = await firebaseUser.getIdToken();
+      localStorage.setItem("auth_token", token);
+
+      // Sync with backend to ensure record exists
+      await authApi.sync();
+
+      // Fetch user role and details from backend
+      const res = await authApi.me();
+      if (res.data?.user) {
+        setDbUser(res.data.user);
+      }
+    } catch (error) {
+      console.error("Failed to sync/fetch user:", error);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
-      setLoading(false);
 
       if (firebaseUser) {
-        // Sync user with backend
-        const token = await firebaseUser.getIdToken();
-        localStorage.setItem("auth_token", token);
-        try {
-          await authApi.sync();
-        } catch (error) {
-          console.error("Failed to sync user:", error);
-        }
+        await syncUser(firebaseUser);
       } else {
         localStorage.removeItem("auth_token");
+        setDbUser(null);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -72,11 +98,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const token = await result.user.getIdToken();
-      localStorage.setItem("auth_token", token);
-      await authApi.sync();
+      // Ensure sync on specific login action too
+      if (result.user) await syncUser(result.user);
     } catch (error) {
       console.error("Google sign in error:", error);
+      throw error;
+    }
+  };
+
+  const signInWithEmail = async (email: string, pass: string) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, pass);
+      if (result.user) await syncUser(result.user);
+    } catch (error) {
+      console.error("Email sign in error:", error);
+      throw error;
+    }
+  };
+
+  const signUpWithEmail = async (email: string, pass: string) => {
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, pass);
+      if (result.user) await syncUser(result.user); // Sync creates the USER role by default
+    } catch (error) {
+      console.error("Email sign up error:", error);
       throw error;
     }
   };
@@ -85,6 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await firebaseSignOut(auth);
       localStorage.removeItem("auth_token");
+      setDbUser(null);
     } catch (error) {
       console.error("Sign out error:", error);
       throw error;
@@ -98,7 +144,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signInWithGoogle, signOut, getToken }}
+      value={{
+        user,
+        dbUser,
+        loading,
+        signInWithGoogle,
+        signInWithEmail,
+        signUpWithEmail,
+        signOut,
+        getToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

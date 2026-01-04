@@ -1,17 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth-context";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 function LoginForm() {
-  const { signInWithGoogle, user, loading } = useAuth();
+  const { signInWithGoogle, signInWithEmail, signUpWithEmail, user, loading } =
+    useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"login" | "signup">("login");
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const from = searchParams.get("from") || "/admin";
 
@@ -26,10 +32,35 @@ function LoginForm() {
     setError(null);
     try {
       await signInWithGoogle();
-      // Navigation will be handled by useEffect
-    } catch (err) {
-      setError("Failed to sign in. Please try again.");
+    } catch (err: any) {
+      setError("Failed to sign in with Google.");
       console.error(err);
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      if (mode === "login") {
+        await signInWithEmail(email, password);
+      } else {
+        await signUpWithEmail(email, password);
+      }
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === "auth/email-already-in-use") {
+        setError("Email is already registered. Please login.");
+      } else if (err.code === "auth/invalid-credential") {
+        setError("Invalid email or password.");
+      } else if (err.code === "auth/weak-password") {
+        setError("Password should be at least 6 characters.");
+      } else {
+        setError("Authentication failed. Please try again.");
+      }
       setIsLoading(false);
     }
   };
@@ -50,22 +81,31 @@ function LoginForm() {
             <span className="text-2xl font-bold text-white">PB</span>
           </div>
 
-          <h1 className="mt-6 text-2xl font-bold text-white">Welcome Back</h1>
-          <p className="mt-2 text-slate-400">Sign in to access your account</p>
+          <h1 className="mt-6 text-2xl font-bold text-white">
+            {mode === "login" ? "Welcome Back" : "Create Account"}
+          </h1>
+          <p className="mt-2 text-slate-400">
+            {mode === "login"
+              ? "Sign in to access your account"
+              : "Sign up to start your journey"}
+          </p>
+        </div>
 
-          {error && (
-            <div className="mt-6 rounded-lg bg-red-500/10 p-3 text-sm text-red-400">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="mt-6 rounded-lg bg-red-500/10 p-3 text-sm text-red-400">
+            {error}
+          </div>
+        )}
 
+        <div className="mt-8 space-y-4">
           <Button
             onClick={handleGoogleSignIn}
             disabled={isLoading}
-            className="mt-8 w-full bg-white text-slate-900 hover:bg-slate-100"
+            variant="outline"
+            className="w-full border-slate-700 bg-transparent text-white hover:bg-slate-800"
             size="lg"
           >
-            {isLoading ? (
+            {isLoading && !email ? ( // Only show spinner here if generic loading or google loading (email empty is lazy check but sufficient if we reset/block inputs)
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
               <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
@@ -90,9 +130,74 @@ function LoginForm() {
             Continue with Google
           </Button>
 
-          <p className="mt-6 text-xs text-slate-500">
-            By signing in, you agree to our Terms of Service and Privacy Policy
-          </p>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-slate-700" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-slate-950 px-2 text-slate-500">
+                Or continue with email
+              </span>
+            </div>
+          </div>
+
+          <form onSubmit={handleEmailAuth} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="border-slate-700 bg-slate-900/50 text-white placeholder:text-slate-500"
+              />
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="border-slate-700 bg-slate-900/50 text-white placeholder:text-slate-500"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
+              size="lg"
+            >
+              {isLoading && email ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : null}
+              {mode === "login" ? "Sign In" : "Sign Up"}
+            </Button>
+          </form>
+
+          <div className="text-center text-sm text-slate-400">
+            {mode === "login" ? (
+              <>
+                Don&apos;t have an account?{" "}
+                <button
+                  onClick={() => setMode("signup")}
+                  className="font-medium text-indigo-400 hover:text-indigo-300"
+                >
+                  Sign up
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  onClick={() => setMode("login")}
+                  className="font-medium text-indigo-400 hover:text-indigo-300"
+                >
+                  Sign in
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
