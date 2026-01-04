@@ -8,6 +8,8 @@ import { Footer } from "@/components/sections/footer";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { SkillsSection } from "@/components/sections/skills-section";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { experienceApi, profileApi, projectsApi, skillsApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
@@ -62,6 +64,7 @@ function PortfolioContent() {
 
   return (
     <main className="min-h-screen bg-slate-950">
+      <ScrollProgress />
       <Header />
       <HeroSection
         name={profileData?.name}
@@ -82,6 +85,7 @@ function PortfolioContent() {
         location="Bangladesh"
       />
       <Footer name={profileData?.name} socialLinks={profileData?.socialLinks} />
+      <ScrollToTop />
     </main>
   );
 }
