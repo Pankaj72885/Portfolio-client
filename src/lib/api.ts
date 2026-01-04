@@ -13,7 +13,7 @@ const api = axios.create({
 api.interceptors.request.use(async (config) => {
   // Get token from Firebase auth (will be implemented)
   const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -27,7 +27,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized
       if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
+        localStorage.removeItem("auth_token");
       }
     }
     return Promise.reject(error);

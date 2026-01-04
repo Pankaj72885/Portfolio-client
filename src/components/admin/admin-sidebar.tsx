@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 import {
   Briefcase,
@@ -14,7 +15,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const sidebarItems = [
   {
@@ -56,6 +57,17 @@ const sidebarItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const { signOut } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-slate-800 bg-slate-950">
@@ -105,6 +117,7 @@ export function AdminSidebar() {
           </Link>
           <Button
             variant="ghost"
+            onClick={handleLogout}
             className="w-full justify-start gap-3 text-red-400 hover:bg-red-500/10 hover:text-red-300"
           >
             <LogOut className="h-5 w-5" />
